@@ -1,0 +1,12 @@
+flowchart TD
+    U[User / Client] --> O[Orchestrator]
+    O --> P[Planner Agent]
+
+    P --> R[Research Agent\n(RAG, search, docs)]
+    P --> E[Executor Agent\n(tool/API actions)]
+
+    R --> M[Memory Layer\n(vector + structured)]
+    E --> T[Tooling Layer\n(DB, APIs, GitHub, code runtime)]
+
+    M --> S[Reviewer / Safety\n+ Observability]
+    T --> S
