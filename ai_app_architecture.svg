@@ -1,0 +1,72 @@
+<svg width="900" height="1000" viewBox="0 0 900 1000" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>AI application architecture flow</title>
+<desc>Diagram showing request flow from user through frontend, backend, LLM API, to response, with an error handling path back to the frontend.</desc>
+
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-error" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#B4552F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="0" y="0" width="900" height="1000" fill="#FFFFFF"/>
+
+<text x="450" y="50" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1A1A1A">AI Application Architecture</text>
+<text x="450" y="80" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" font-style="italic" fill="#666666">User → Frontend → Backend → LLM API → Response</text>
+
+<!-- User -->
+<g>
+  <rect x="300" y="120" width="300" height="90" rx="12" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
+  <text x="450" y="158" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#2C2C2A">User</text>
+  <text x="450" y="184" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#5F5E5A">Initiates a request</text>
+</g>
+<line x1="450" y1="210" x2="450" y2="256" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Frontend -->
+<g>
+  <rect x="300" y="256" width="300" height="90" rx="12" fill="#E6F1FB" stroke="#378ADD" stroke-width="1"/>
+  <text x="450" y="294" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#0C447C">Frontend</text>
+  <text x="450" y="320" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#185FA5">UI, input validation</text>
+</g>
+<line x1="450" y1="346" x2="450" y2="392" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Backend -->
+<g>
+  <rect x="300" y="392" width="300" height="90" rx="12" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+  <text x="450" y="430" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#085041">Backend</text>
+  <text x="450" y="456" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#0F6E56">Auth, orchestration</text>
+</g>
+<line x1="450" y1="482" x2="450" y2="528" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- LLM API -->
+<g>
+  <rect x="300" y="528" width="300" height="90" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1"/>
+  <text x="450" y="566" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#3C3489">LLM API</text>
+  <text x="450" y="592" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#534AB7">Generates completion</text>
+</g>
+<line x1="450" y1="618" x2="450" y2="664" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Response -->
+<g>
+  <rect x="300" y="664" width="300" height="90" rx="12" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
+  <text x="450" y="702" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#2C2C2A">Response</text>
+  <text x="450" y="728" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#5F5E5A">Rendered back to user</text>
+</g>
+
+<!-- Error handling path (Backend -> Frontend) -->
+<path d="M 600 437 C 780 437, 780 301, 602 301" fill="none" stroke="#B4552F" stroke-width="1.5" stroke-dasharray="8 6" marker-end="url(#arrow-error)"/>
+<text x="790" y="370" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#993C1D" transform="rotate(-90 790 370)">Error path</text>
+
+<!-- Legend -->
+<rect x="300" y="800" width="300" height="1" fill="#CCCCCC"/>
+<line x1="330" y1="830" x2="380" y2="830" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="392" y="835" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#333333">Normal request/response flow</text>
+
+<line x1="330" y1="865" x2="380" y2="865" stroke="#B4552F" stroke-width="1.5" stroke-dasharray="8 6" marker-end="url(#arrow-error)"/>
+<text x="392" y="870" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#333333">Error response returns early to frontend</text>
+
+<text x="450" y="920" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#888888">Backend validates, authenticates, and calls the LLM API; failures short-circuit back to the user via the frontend.</text>
+
+</svg>
