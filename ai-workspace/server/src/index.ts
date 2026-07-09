@@ -8,12 +8,37 @@ import { ChatMessage, ChatRequest, Provider } from './types';
 const app = express();
 const port = Number(process.env.PORT || 8787);
 
+const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('Origin not allowed by CORS'));
+    },
   }),
 );
 app.use(express.json({ limit: '1mb' }));
+
+app.use((error: Error, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (error.message === 'Origin not allowed by CORS') {
+    return res.status(403).json({
+      error: {
+        code: 'CORS_BLOCKED',
+        message: 'Request origin is not allowed by server CORS policy.',
+      },
+    });
+  }
+
+  return next(error);
+});
 
 const requestSchema = z.object({
   provider: z.enum(['groq', 'gemini']),
