@@ -17,13 +17,17 @@ It includes hands-on implementations of autonomous agents, multi-agent workflows
 
 ## 🛠️ Technical Skills
 
+- Python
+- Numpy
+- Pandas
+- Matplotlib
+- AI & Robotics (Beginner–Intermediate)
 - PHP
 - MySQL
 - HTML
 - CSS
 - JavaScript
 - Networking (CCNA-level)
-- AI & Robotics (Beginner–Intermediate)
 - Software Testing & SQA
 
 ## 📚 Learning Goals
