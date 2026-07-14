@@ -11,9 +11,8 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from langchain.schema import Document
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from pypdf import PdfReader
 
@@ -33,7 +32,7 @@ FAISS_DIR = Path(os.getenv("FAISS_DIR", "./data/faiss"))
 SESSIONS_DB = Path(os.getenv("SESSIONS_DB", "./data/sessions/sessions.json"))
 DOC_REGISTRY = Path(os.getenv("DOC_REGISTRY", "./data/doc_registry.json"))
 
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-mpnet-base-v2")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 TOP_K = int(os.getenv("TOP_K", "5"))
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "900"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "150"))
@@ -78,7 +77,11 @@ def file_size_human(size_bytes: int) -> str:
 
 @st.cache_resource
 def get_embeddings():
-    return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    return OpenAIEmbeddings(
+        model=EMBEDDING_MODEL,
+        api_key=os.getenv("OPENAI_API_KEY"),
+        base_url=os.getenv("OPENAI_BASE_URL", "https://api.groq.com/openai/v1"),
+    )
 
 def get_splitter():
     return RecursiveCharacterTextSplitter(
