@@ -191,6 +191,12 @@ if current_theme == "Dark":
             border: 1px dashed #374151 !important;
             color: #e5e7eb !important;
         }
+        
+        /* Fix dataframes and tables in Dark Mode */
+        div[data-testid="stTable"] td, div[data-testid="stTable"] th, .stDataFrame td, .stDataFrame th, [data-testid="stTable"] tr, .stDataFrame tr, [data-testid="stDataFrameData"] td, [data-testid="stDataFrameData"] th {
+            color: #e5e7eb !important;
+            background-color: #1f2937 !important;
+        }
     </style>
     """
 else:
@@ -326,6 +332,12 @@ else:
             background-color: #f9fafb !important;
             border: 1px dashed #e5e7eb !important;
             color: #1f2937 !important;
+        }
+        
+        /* Fix dataframes and tables in Light Mode */
+        div[data-testid="stTable"] td, div[data-testid="stTable"] th, .stDataFrame td, .stDataFrame th, [data-testid="stTable"] tr, .stDataFrame tr, [data-testid="stDataFrameData"] td, [data-testid="stDataFrameData"] th {
+            color: #1f2937 !important;
+            background-color: #ffffff !important;
         }
     </style>
     """
