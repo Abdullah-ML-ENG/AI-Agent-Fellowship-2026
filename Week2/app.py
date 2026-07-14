@@ -60,17 +60,28 @@ current_theme = st.session_state.get("theme_mode", "Light")
 if current_theme == "Dark":
     theme_style = """
     <style>
-        /* Dark Theme overrides */
-        [data-testid="stAppViewContainer"] {
-            background-color: #0e1117;
-            color: #e5e7eb;
+        /* Global Background and text color overrides */
+        .stApp, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
+            background-color: #0e1117 !important;
+            color: #e5e7eb !important;
         }
+        
+        /* Sidebar container */
         [data-testid="stSidebar"] {
             background-color: #1f2937 !important;
         }
-        .reportview-container {
-            background: #0e1117;
+        
+        /* Fix sidebar text and label colors */
+        [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div, [data-testid="stSidebar"] li {
+            color: #e5e7eb !important;
         }
+        
+        /* Header bar */
+        [data-testid="stHeader"] {
+            background-color: transparent !important;
+        }
+        
+        /* Metric cards */
         .metric-card {
             background-color: #1f2937;
             border: 1px solid #374151;
@@ -81,16 +92,18 @@ if current_theme == "Dark":
             margin-bottom: 1rem;
         }
         .metric-title {
-            color: #9ca3af;
+            color: #9ca3af !important;
             font-size: 0.875rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #00f0ff;
+            color: #00f0ff !important;
             font-size: 1.875rem;
             font-weight: 700;
         }
+        
+        /* Chat bubble styles */
         .chat-bubble {
             padding: 1rem;
             border-radius: 0.5rem;
@@ -101,17 +114,19 @@ if current_theme == "Dark":
         .user-bubble {
             background-color: #2e3e56;
             border: 1px solid #4a5c78;
-            color: #f3f4f6;
+            color: #f3f4f6 !important;
         }
         .assistant-bubble {
             background-color: #1f2937;
             border: 1px solid #374151;
-            color: #f3f4f6;
+            color: #f3f4f6 !important;
         }
         .chat-avatar {
             font-size: 1.5rem;
             margin-right: 0.8rem;
         }
+        
+        /* Citations card */
         .citation-container {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -119,8 +134,10 @@ if current_theme == "Dark":
             border-left: 3px solid #00f0ff;
             font-size: 0.85rem;
             border-radius: 0.25rem;
-            color: #e5e7eb;
+            color: #e5e7eb !important;
         }
+        
+        /* Top app banner */
         .app-banner {
             background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
             padding: 2rem;
@@ -131,14 +148,48 @@ if current_theme == "Dark":
         }
         .app-banner h1 {
             margin: 0;
-            color: #00f0ff;
+            color: #00f0ff !important;
             font-size: 2.25rem;
             font-weight: 800;
         }
         .app-banner p {
             margin-top: 0.5rem;
-            color: #9ca3af;
+            color: #9ca3af !important;
             font-size: 1.125rem;
+        }
+        
+        /* Text, Markdown and headers */
+        h1, h2, h3, h4, h5, h6, p, span, label, li, a, .stMarkdown {
+            color: #e5e7eb !important;
+        }
+        
+        /* Tabs styling */
+        button[data-baseweb="tab"] {
+            color: #9ca3af !important;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            color: #00f0ff !important;
+            border-bottom-color: #00f0ff !important;
+        }
+        
+        /* Fix input fields, textareas, and selection boxes */
+        input, textarea, select, div[data-baseweb="select"] {
+            background-color: #1f2937 !important;
+            color: #e5e7eb !important;
+            border-color: #374151 !important;
+        }
+        
+        /* Fix selectbox option elements */
+        div[role="listbox"] ul {
+            background-color: #1f2937 !important;
+            color: #e5e7eb !important;
+        }
+        
+        /* File uploader container */
+        div[data-testid="stFileUploader"] section {
+            background-color: #1f2937 !important;
+            border: 1px dashed #374151 !important;
+            color: #e5e7eb !important;
         }
     </style>
     """
@@ -146,16 +197,27 @@ else:
     theme_style = """
     <style>
         /* Light Theme overrides */
-        [data-testid="stAppViewContainer"] {
-            background-color: #ffffff;
-            color: #1f2937;
+        .stApp, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
         }
+        
+        /* Sidebar container */
         [data-testid="stSidebar"] {
             background-color: #f3f4f6 !important;
         }
-        .reportview-container {
-            background: #ffffff;
+        
+        /* Fix sidebar text and label colors */
+        [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div, [data-testid="stSidebar"] li {
+            color: #1f2937 !important;
         }
+        
+        /* Header bar */
+        [data-testid="stHeader"] {
+            background-color: transparent !important;
+        }
+        
+        /* Metric cards */
         .metric-card {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -166,16 +228,18 @@ else:
             margin-bottom: 1rem;
         }
         .metric-title {
-            color: #4b5563;
+            color: #4b5563 !important;
             font-size: 0.875rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #1e3a8a;
+            color: #1e3a8a !important;
             font-size: 1.875rem;
             font-weight: 700;
         }
+        
+        /* Chat bubble styles */
         .chat-bubble {
             padding: 1rem;
             border-radius: 0.5rem;
@@ -186,17 +250,19 @@ else:
         .user-bubble {
             background-color: #eff6ff;
             border: 1px solid #bfdbfe;
-            color: #1e293b;
+            color: #1e293b !important;
         }
         .assistant-bubble {
             background-color: #f3f4f6;
             border: 1px solid #e5e7eb;
-            color: #1e293b;
+            color: #1e293b !important;
         }
         .chat-avatar {
             font-size: 1.5rem;
             margin-right: 0.8rem;
         }
+        
+        /* Citations card */
         .citation-container {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -204,8 +270,10 @@ else:
             border-left: 3px solid #1e3a8a;
             font-size: 0.85rem;
             border-radius: 0.25rem;
-            color: #374151;
+            color: #374151 !important;
         }
+        
+        /* Top app banner */
         .app-banner {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             padding: 2rem;
@@ -216,14 +284,48 @@ else:
         }
         .app-banner h1 {
             margin: 0;
-            color: #ffffff;
+            color: #ffffff !important;
             font-size: 2.25rem;
             font-weight: 800;
         }
         .app-banner p {
             margin-top: 0.5rem;
-            color: #e0f2fe;
+            color: #e0f2fe !important;
             font-size: 1.125rem;
+        }
+        
+        /* Text, Markdown and headers */
+        h1, h2, h3, h4, h5, h6, p, span, label, li, a, .stMarkdown {
+            color: #1f2937 !important;
+        }
+        
+        /* Tabs styling */
+        button[data-baseweb="tab"] {
+            color: #4b5563 !important;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            color: #1e3a8a !important;
+            border-bottom-color: #1e3a8a !important;
+        }
+        
+        /* Fix input fields, textareas, and selection boxes */
+        input, textarea, select, div[data-baseweb="select"] {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+            border-color: #e5e7eb !important;
+        }
+        
+        /* Fix selectbox option elements */
+        div[role="listbox"] ul {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+        }
+        
+        /* File uploader container */
+        div[data-testid="stFileUploader"] section {
+            background-color: #f9fafb !important;
+            border: 1px dashed #e5e7eb !important;
+            color: #1f2937 !important;
         }
     </style>
     """
