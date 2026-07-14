@@ -14,10 +14,8 @@ from langchain.schema import Document
 from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
 from langchain_community.vectorstores import FAISS
 from pypdf import PdfReader
-from chromadb.config import Settings
 
 # ---------------------------
 # Config & Setup
@@ -201,22 +199,11 @@ def _load_or_create_faiss(embeddings):
         return FAISS.load_local(str(index_path), embeddings, allow_dangerous_deserialization=True)
     return None
 
-def _get_chroma(embeddings):
-    return Chroma(
-        collection_name="enterprise_docs",
-        embedding_function=embeddings,
-        persist_directory=str(CHROMA_DIR),
-        client_settings=Settings(is_persistent=True, anonymized_telemetry=False),
-    )
-
 def index_chunks(chunks: List[Document]):
     if not chunks:
         raise ValueError("No chunks to index.")
 
     embeddings = get_embeddings()
-
-    chroma = _get_chroma(embeddings)
-    chroma.add_documents(chunks)
 
     faiss_db = _load_or_create_faiss(embeddings)
     if faiss_db is None:
@@ -227,27 +214,20 @@ def index_chunks(chunks: List[Document]):
 
 def get_vectorstore(store_name: str):
     embeddings = get_embeddings()
-    if store_name == "ChromaDB":
-        return _get_chroma(embeddings)
-    if store_name == "FAISS":
-        index_path = FAISS_DIR / "index"
-        if not index_path.exists():
-            return None
-        return FAISS.load_local(str(index_path), embeddings, allow_dangerous_deserialization=True)
-    return None
+    index_path = FAISS_DIR / "index"
+    if not index_path.exists():
+        return None
+    return FAISS.load_local(str(index_path), embeddings, allow_dangerous_deserialization=True)
 
 def retrieve_context(question: str, store_name: str, top_k: int, filter_source: Optional[str] = None):
     vs = get_vectorstore(store_name)
     if vs is None:
         return []
 
+    docs = vs.similarity_search(question, k=top_k)
     if filter_source:
-        docs = vs.similarity_search(question, k=top_k, filter={"source": filter_source}) \
-            if store_name == "ChromaDB" else vs.similarity_search(question, k=top_k)
-        if store_name == "FAISS":
-            docs = [d for d in docs if d.metadata.get("source") == filter_source]
-        return docs
-    return vs.similarity_search(question, k=top_k)
+        docs = [d for d in docs if d.metadata.get("source") == filter_source]
+    return docs
 
 def build_prompt(question: str, history: List[Dict], context_docs: List[Document]) -> str:
     history_block = "\n".join([f"{m['role']}: {m['content']}" for m in history[-8:]])
@@ -321,9 +301,6 @@ def delete_document(file_id: str):
     reg["documents"] = remaining
     save_registry(reg)
 
-    if CHROMA_DIR.exists():
-        shutil.rmtree(CHROMA_DIR)
-        CHROMA_DIR.mkdir(parents=True, exist_ok=True)
     if FAISS_DIR.exists():
         shutil.rmtree(FAISS_DIR)
         FAISS_DIR.mkdir(parents=True, exist_ok=True)
@@ -362,7 +339,7 @@ if "messages" not in st.session_state:
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "vector_store_choice" not in st.session_state:
-    st.session_state.vector_store_choice = "ChromaDB"
+    st.session_state.vector_store_choice = "FAISS"
 
 if st.button("Load Saved Session"):
     st.session_state.messages = load_chat_session(st.session_state.session_id)
@@ -409,7 +386,7 @@ with col1:
 
     st.divider()
     st.subheader("⚙️ Retrieval Settings")
-    st.session_state.vector_store_choice = st.selectbox("Vector Store", ["ChromaDB", "FAISS"], index=0)
+    st.session_state.vector_store_choice = st.selectbox("Vector Store", ["FAISS"], index=0)
     top_k = st.slider("Top-K", min_value=1, max_value=10, value=TOP_K)
     reg = load_registry()
     doc_names = ["All Documents"] + [d["file_name"] for d in reg["documents"]]
