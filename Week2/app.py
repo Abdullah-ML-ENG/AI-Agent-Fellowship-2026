@@ -35,6 +35,9 @@ if "total_cost" not in st.session_state:
 if "theme_mode" not in st.session_state:
     st.session_state.theme_mode = "Light"
 
+def change_theme():
+    st.session_state.theme_mode = st.session_state.temp_theme_mode
+
 # Initialize default keys
 if "openai_key" not in st.session_state:
     st.session_state.openai_key = ""
@@ -373,11 +376,12 @@ st.sidebar.subheader("🌓 Theme Settings")
 theme_mode = st.sidebar.radio(
     "Interface Mode",
     options=["Light", "Dark"],
+    key="temp_theme_mode",
     index=0 if st.session_state.theme_mode == "Light" else 1,
     horizontal=True,
+    on_change=change_theme,
     help="Toggle between Light and Dark interface styles."
 )
-st.session_state.theme_mode = theme_mode
 
 # 2. API Key Inputs in Sidebar (collapsible)
 with st.sidebar.expander("⚙️ API Configuration", expanded=False):
