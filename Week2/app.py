@@ -200,6 +200,25 @@ if current_theme == "Dark":
             color: #e5e7eb !important;
             background-color: #1f2937 !important;
         }
+        
+        /* Fix buttons in Dark Mode */
+        button[data-testid^="stBaseButton"], div.stButton > button {
+            background-color: #1f2937 !important;
+            color: #e5e7eb !important;
+            border: 1px solid #374151 !important;
+        }
+        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
+            background-color: #374151 !important;
+            color: #00f0ff !important;
+            border-color: #00f0ff !important;
+        }
+        /* Ensure button text labels are visible in Dark Mode */
+        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
+            color: #e5e7eb !important;
+        }
+        button[data-testid^="stBaseButton"]:hover p, button[data-testid^="stBaseButton"]:hover span, div.stButton > button:hover p, div.stButton > button:hover span {
+            color: #00f0ff !important;
+        }
     </style>
     """
 else:
@@ -341,6 +360,25 @@ else:
         div[data-testid="stTable"] td, div[data-testid="stTable"] th, .stDataFrame td, .stDataFrame th, [data-testid="stTable"] tr, .stDataFrame tr, [data-testid="stDataFrameData"] td, [data-testid="stDataFrameData"] th {
             color: #1f2937 !important;
             background-color: #ffffff !important;
+        }
+        
+        /* Fix buttons in Light Mode */
+        button[data-testid^="stBaseButton"], div.stButton > button {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #e5e7eb !important;
+        }
+        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
+            background-color: #f3f4f6 !important;
+            color: #1e3a8a !important;
+            border-color: #1e3a8a !important;
+        }
+        /* Ensure button text labels are visible in Light Mode */
+        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
+            color: #1f2937 !important;
+        }
+        button[data-testid^="stBaseButton"]:hover p, button[data-testid^="stBaseButton"]:hover span, div.stButton > button:hover p, div.stButton > button:hover span {
+            color: #1e3a8a !important;
         }
     </style>
     """
