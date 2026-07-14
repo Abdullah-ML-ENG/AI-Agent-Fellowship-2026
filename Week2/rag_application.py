@@ -10,13 +10,14 @@ from typing import List, Dict, Optional
 import streamlit as st
 from dotenv import load_dotenv
 
-from langchain_core.documents import Document
+from langchain.schema import Document
 from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_community.vectorstores import FAISS
 from pypdf import PdfReader
+from chromadb.config import Settings
 
 # ---------------------------
 # Config & Setup
@@ -77,6 +78,7 @@ def file_size_human(size_bytes: int) -> str:
         i += 1
     return f"{s:.2f} {units[i]}"
 
+@st.cache_resource
 def get_embeddings():
     return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
@@ -108,6 +110,8 @@ def extract_pdf(file_path: Path) -> List[Document]:
 
 def extract_txt_md(file_path: Path) -> List[Document]:
     text = clean_text(file_path.read_text(encoding="utf-8", errors="ignore"))
+    if not text:
+        return []
     return [Document(page_content=text, metadata={
         "source": file_path.name,
         "page": None,
@@ -116,19 +120,34 @@ def extract_txt_md(file_path: Path) -> List[Document]:
     })]
 
 def extract_docx(file_path: Path) -> List[Document]:
-    # bonus stub (optional dependency python-docx)
     try:
         import docx
         d = docx.Document(str(file_path))
-        text = "\n".join([p.text for p in d.paragraphs])
-        text = clean_text(text)
+        parts = []
+
+        for p in d.paragraphs:
+            t = (p.text or "").strip()
+            if t:
+                parts.append(t)
+
+        for table in d.tables:
+            for row in table.rows:
+                row_text = " | ".join((cell.text or "").strip() for cell in row.cells).strip(" |")
+                if row_text:
+                    parts.append(row_text)
+
+        text = clean_text("\n".join(parts))
+        if not text:
+            return []
+
         return [Document(page_content=text, metadata={
             "source": file_path.name,
             "page": None,
             "doc_id": file_path.stem,
             "file_path": str(file_path),
         })]
-    except Exception:
+    except Exception as e:
+        logger.exception(f"DOCX extraction failed for {file_path.name}: {e}")
         return []
 
 def process_uploaded_file(uploaded_file) -> Dict:
@@ -153,7 +172,12 @@ def process_uploaded_file(uploaded_file) -> Dict:
     splitter = get_splitter()
     chunks = splitter.split_documents(raw_docs)
 
-    # annotate chunk ids
+    if not chunks:
+        raise ValueError(
+            f"No extractable text/chunks found in {uploaded_file.name}. "
+            "The file may be empty, image-only, or unsupported formatting."
+        )
+
     for idx, c in enumerate(chunks):
         c.metadata["chunk_id"] = idx
         c.metadata["file_id"] = file_id
@@ -177,18 +201,23 @@ def _load_or_create_faiss(embeddings):
         return FAISS.load_local(str(index_path), embeddings, allow_dangerous_deserialization=True)
     return None
 
-def index_chunks(chunks: List[Document]):
-    embeddings = get_embeddings()
-
-    # Chroma (default)
-    chroma = Chroma(
+def _get_chroma(embeddings):
+    return Chroma(
         collection_name="enterprise_docs",
         embedding_function=embeddings,
         persist_directory=str(CHROMA_DIR),
+        client_settings=Settings(is_persistent=True, anonymized_telemetry=False),
     )
+
+def index_chunks(chunks: List[Document]):
+    if not chunks:
+        raise ValueError("No chunks to index.")
+
+    embeddings = get_embeddings()
+
+    chroma = _get_chroma(embeddings)
     chroma.add_documents(chunks)
 
-    # FAISS
     faiss_db = _load_or_create_faiss(embeddings)
     if faiss_db is None:
         faiss_db = FAISS.from_documents(chunks, embeddings)
@@ -199,11 +228,7 @@ def index_chunks(chunks: List[Document]):
 def get_vectorstore(store_name: str):
     embeddings = get_embeddings()
     if store_name == "ChromaDB":
-        return Chroma(
-            collection_name="enterprise_docs",
-            embedding_function=embeddings,
-            persist_directory=str(CHROMA_DIR),
-        )
+        return _get_chroma(embeddings)
     if store_name == "FAISS":
         index_path = FAISS_DIR / "index"
         if not index_path.exists():
@@ -217,7 +242,6 @@ def retrieve_context(question: str, store_name: str, top_k: int, filter_source: 
         return []
 
     if filter_source:
-        # metadata filter (advanced feature)
         docs = vs.similarity_search(question, k=top_k, filter={"source": filter_source}) \
             if store_name == "ChromaDB" else vs.similarity_search(question, k=top_k)
         if store_name == "FAISS":
@@ -255,10 +279,15 @@ def generate_answer(question: str, history: List[Dict], context_docs: List[Docum
     if not context_docs:
         return "I could not find relevant context in the indexed documents."
 
-    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"), temperature=0)
+    llm = ChatOpenAI(
+        model=os.getenv("OPENAI_MODEL", "llama-3.1-70b-versatile"),
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY"),
+        base_url=os.getenv("OPENAI_BASE_URL", "https://api.groq.com/openai/v1"),
+    )
     prompt = build_prompt(question, history, context_docs)
     resp = llm.invoke(prompt)
-    return resp.content
+    return getattr(resp, "content", str(resp))
 
 def save_chat_session(session_id: str, messages: List[Dict]):
     db = load_sessions()
@@ -283,18 +312,15 @@ def delete_document(file_id: str):
     if not target:
         return False
 
-    # remove raw file
     try:
         Path(target["file_path"]).unlink(missing_ok=True)
     except Exception:
         pass
 
-    # rebuild both vector stores from remaining docs (safe approach)
     remaining = [d for d in docs if d["file_id"] != file_id]
     reg["documents"] = remaining
     save_registry(reg)
 
-    # wipe stores
     if CHROMA_DIR.exists():
         shutil.rmtree(CHROMA_DIR)
         CHROMA_DIR.mkdir(parents=True, exist_ok=True)
@@ -302,8 +328,6 @@ def delete_document(file_id: str):
         shutil.rmtree(FAISS_DIR)
         FAISS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # re-index from chunks in registry snapshot file (simple production-safe alternative: store serialized chunks)
-    # Here we re-process from raw files:
     all_chunks = []
     for doc in remaining:
         path = Path(doc["file_path"])
@@ -340,14 +364,12 @@ if "session_id" not in st.session_state:
 if "vector_store_choice" not in st.session_state:
     st.session_state.vector_store_choice = "ChromaDB"
 
-# load previous session if available
 if st.button("Load Saved Session"):
     st.session_state.messages = load_chat_session(st.session_state.session_id)
     st.success("Session loaded.")
 
 col1, col2, col3 = st.columns([1.1, 1.4, 1.5])
 
-# Upload Panel
 with col1:
     st.subheader("📤 Upload Documents")
     uploaded_files = st.file_uploader(
@@ -361,27 +383,28 @@ with col1:
         else:
             reg = load_registry()
             total_new_chunks = 0
-            for uf in uploaded_files:
-                try:
-                    result = process_uploaded_file(uf)
-                    index_chunks(result["chunks"])
-                    total_new_chunks += result["chunks_count"]
+            with st.spinner("Processing and indexing documents..."):
+                for uf in uploaded_files:
+                    try:
+                        result = process_uploaded_file(uf)
+                        index_chunks(result["chunks"])
+                        total_new_chunks += result["chunks_count"]
 
-                    reg["documents"].append({
-                        "file_id": result["file_id"],
-                        "file_name": result["file_name"],
-                        "file_path": result["file_path"],
-                        "file_size": result["file_size"],
-                        "pages": result["pages"],
-                        "chunks_count": result["chunks_count"],
-                        "uploaded_at": result["uploaded_at"],
-                        "status": result["status"],
-                    })
-                except Exception as e:
-                    logger.exception("Processing failed")
-                    st.error(f"{uf.name}: processing failed -> {e}")
+                        reg["documents"].append({
+                            "file_id": result["file_id"],
+                            "file_name": result["file_name"],
+                            "file_path": result["file_path"],
+                            "file_size": result["file_size"],
+                            "pages": result["pages"],
+                            "chunks_count": result["chunks_count"],
+                            "uploaded_at": result["uploaded_at"],
+                            "status": result["status"],
+                        })
+                    except Exception as e:
+                        logger.exception("Processing failed")
+                        st.error(f"{uf.name}: processing failed -> {e}")
 
-            save_registry(reg)
+                save_registry(reg)
             st.success(f"Processing complete. Added chunks: {total_new_chunks}")
 
     st.divider()
@@ -392,7 +415,6 @@ with col1:
     doc_names = ["All Documents"] + [d["file_name"] for d in reg["documents"]]
     filter_doc = st.selectbox("Filter by Document (Advanced Feature)", doc_names)
 
-# Document Library
 with col2:
     st.subheader("🗂️ Document Library")
     reg = load_registry()
@@ -431,6 +453,9 @@ with col2:
                             raise ValueError("Unsupported file type")
 
                         chunks = get_splitter().split_documents(raw_docs)
+                        if not chunks:
+                            raise ValueError("No extractable text/chunks found during reprocess.")
+
                         for idx, c in enumerate(chunks):
                             c.metadata["chunk_id"] = idx
                             c.metadata["file_id"] = d["file_id"]
@@ -449,7 +474,6 @@ with col2:
                         st.success("Document deleted from library and vector stores.")
                         st.rerun()
 
-# Chat Panel
 with col3:
     st.subheader("💬 Chat with your documents")
     for m in st.session_state.messages:
