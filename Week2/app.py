@@ -56,27 +56,27 @@ st.markdown("""
 <style>
     /* Global styles */
     .reportview-container {
-        background: #0e1117;
+        background: #ffffff;
     }
     
     /* Metrics panel */
     .metric-card {
-        background-color: #1f2937;
-        border: 1px solid #374151;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
         padding: 1.5rem;
         border-radius: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         text-align: center;
         margin-bottom: 1rem;
     }
     .metric-title {
-        color: #9ca3af;
+        color: #4b5563;
         font-size: 0.875rem;
         font-weight: 500;
         margin-bottom: 0.5rem;
     }
     .metric-value {
-        color: #00f0ff;
+        color: #1e3a8a;
         font-size: 1.875rem;
         font-weight: 700;
     }
@@ -90,14 +90,14 @@ st.markdown("""
         align-items: flex-start;
     }
     .user-bubble {
-        background-color: #2e3e56;
-        border: 1px solid #4a5c78;
-        color: #f3f4f6;
+        background-color: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e293b;
     }
     .assistant-bubble {
-        background-color: #1f2937;
-        border: 1px solid #374151;
-        color: #f3f4f6;
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        color: #1e293b;
     }
     .chat-avatar {
         font-size: 1.5rem;
@@ -108,30 +108,31 @@ st.markdown("""
     .citation-container {
         margin-top: 0.5rem;
         padding: 0.5rem;
-        background-color: #111827;
-        border-left: 3px solid #00f0ff;
+        background-color: #f9fafb;
+        border-left: 3px solid #1e3a8a;
         font-size: 0.85rem;
         border-radius: 0.25rem;
+        color: #374151;
     }
     
     /* Banner */
     .app-banner {
-        background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
         padding: 2rem;
         border-radius: 0.75rem;
-        border: 1px solid #1d4ed8;
+        border: 1px solid #2563eb;
         margin-bottom: 2rem;
         text-align: center;
     }
     .app-banner h1 {
         margin: 0;
-        color: #00f0ff;
+        color: #ffffff;
         font-size: 2.25rem;
         font-weight: 800;
     }
     .app-banner p {
         margin-top: 0.5rem;
-        color: #9ca3af;
+        color: #e0f2fe;
         font-size: 1.125rem;
     }
 </style>
