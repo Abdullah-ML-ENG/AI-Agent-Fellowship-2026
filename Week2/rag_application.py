@@ -10,7 +10,7 @@ from typing import List, Dict, Optional
 import streamlit as st
 from dotenv import load_dotenv
 
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
