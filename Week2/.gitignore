@@ -1,0 +1,21 @@
+# API keys and environment variables
+.env
+
+# Local vector databases
+chroma_db/
+faiss_db/
+
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Streamlit config / cache
+.streamlit/runtime/
+.streamlit/secrets.toml
+
+# OS generated files
+.DS_Store
+Thumbs.db
