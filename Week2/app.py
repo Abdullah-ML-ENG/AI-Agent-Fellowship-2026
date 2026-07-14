@@ -32,6 +32,8 @@ if "total_tokens" not in st.session_state:
     st.session_state.total_tokens = 0
 if "total_cost" not in st.session_state:
     st.session_state.total_cost = 0.0
+if "theme_mode" not in st.session_state:
+    st.session_state.theme_mode = "Light"
 
 # Initialize default keys
 if "openai_key" not in st.session_state:
@@ -50,93 +52,183 @@ default_gemini = os.getenv("GOOGLE_API_KEY", "")
 default_groq = os.getenv("GROQ_API_KEY", "")
 
 # ----------------------------------------------------
-# Premium Styling (Custom CSS)
+# Premium Styling (Custom CSS based on theme selection)
 # ----------------------------------------------------
-st.markdown("""
-<style>
-    /* Global styles */
-    .reportview-container {
-        background: #ffffff;
-    }
-    
-    /* Metrics panel */
-    .metric-card {
-        background-color: #f9fafb;
-        border: 1px solid #e5e7eb;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-    .metric-title {
-        color: #4b5563;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-    .metric-value {
-        color: #1e3a8a;
-        font-size: 1.875rem;
-        font-weight: 700;
-    }
-    
-    /* Chat styling */
-    .chat-bubble {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: flex-start;
-    }
-    .user-bubble {
-        background-color: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1e293b;
-    }
-    .assistant-bubble {
-        background-color: #f3f4f6;
-        border: 1px solid #e5e7eb;
-        color: #1e293b;
-    }
-    .chat-avatar {
-        font-size: 1.5rem;
-        margin-right: 0.8rem;
-    }
-    
-    /* Citations */
-    .citation-container {
-        margin-top: 0.5rem;
-        padding: 0.5rem;
-        background-color: #f9fafb;
-        border-left: 3px solid #1e3a8a;
-        font-size: 0.85rem;
-        border-radius: 0.25rem;
-        color: #374151;
-    }
-    
-    /* Banner */
-    .app-banner {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        padding: 2rem;
-        border-radius: 0.75rem;
-        border: 1px solid #2563eb;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    .app-banner h1 {
-        margin: 0;
-        color: #ffffff;
-        font-size: 2.25rem;
-        font-weight: 800;
-    }
-    .app-banner p {
-        margin-top: 0.5rem;
-        color: #e0f2fe;
-        font-size: 1.125rem;
-    }
-</style>
-""", unsafe_allow_html=True)
+theme_style = ""
+current_theme = st.session_state.get("theme_mode", "Light")
+
+if current_theme == "Dark":
+    theme_style = """
+    <style>
+        /* Dark Theme overrides */
+        [data-testid="stAppViewContainer"] {
+            background-color: #0e1117;
+            color: #e5e7eb;
+        }
+        [data-testid="stSidebar"] {
+            background-color: #1f2937 !important;
+        }
+        .reportview-container {
+            background: #0e1117;
+        }
+        .metric-card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .metric-title {
+            color: #9ca3af;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .metric-value {
+            color: #00f0ff;
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+        .chat-bubble {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .user-bubble {
+            background-color: #2e3e56;
+            border: 1px solid #4a5c78;
+            color: #f3f4f6;
+        }
+        .assistant-bubble {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: #f3f4f6;
+        }
+        .chat-avatar {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+        .citation-container {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #111827;
+            border-left: 3px solid #00f0ff;
+            font-size: 0.85rem;
+            border-radius: 0.25rem;
+            color: #e5e7eb;
+        }
+        .app-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid #1d4ed8;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .app-banner h1 {
+            margin: 0;
+            color: #00f0ff;
+            font-size: 2.25rem;
+            font-weight: 800;
+        }
+        .app-banner p {
+            margin-top: 0.5rem;
+            color: #9ca3af;
+            font-size: 1.125rem;
+        }
+    </style>
+    """
+else:
+    theme_style = """
+    <style>
+        /* Light Theme overrides */
+        [data-testid="stAppViewContainer"] {
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+        [data-testid="stSidebar"] {
+            background-color: #f3f4f6 !important;
+        }
+        .reportview-container {
+            background: #ffffff;
+        }
+        .metric-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .metric-title {
+            color: #4b5563;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .metric-value {
+            color: #1e3a8a;
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+        .chat-bubble {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .user-bubble {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e293b;
+        }
+        .assistant-bubble {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #1e293b;
+        }
+        .chat-avatar {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+        .citation-container {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f9fafb;
+            border-left: 3px solid #1e3a8a;
+            font-size: 0.85rem;
+            border-radius: 0.25rem;
+            color: #374151;
+        }
+        .app-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid #2563eb;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .app-banner h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 2.25rem;
+            font-weight: 800;
+        }
+        .app-banner p {
+            margin-top: 0.5rem;
+            color: #e0f2fe;
+            font-size: 1.125rem;
+        }
+    </style>
+    """
+
+st.markdown(theme_style, unsafe_allow_html=True)
 
 # ----------------------------------------------------
 # Main Layout Banner
@@ -160,6 +252,18 @@ if not is_authenticated():
     st.stop()
 
 current_user = get_current_user()
+
+# Theme Mode Selector in Sidebar
+st.sidebar.markdown("---")
+st.sidebar.subheader("🌓 Theme Settings")
+theme_mode = st.sidebar.radio(
+    "Interface Mode",
+    options=["Light", "Dark"],
+    index=0 if st.session_state.theme_mode == "Light" else 1,
+    horizontal=True,
+    help="Toggle between Light and Dark interface styles."
+)
+st.session_state.theme_mode = theme_mode
 
 # 2. API Key Inputs in Sidebar (collapsible)
 with st.sidebar.expander("⚙️ API Configuration", expanded=False):
