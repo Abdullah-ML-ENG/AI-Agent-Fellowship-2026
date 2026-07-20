@@ -63,20 +63,22 @@ current_theme = st.session_state.get("theme_mode", "Light")
 if current_theme == "Dark":
     theme_style = """
     <style>
-        /* Global Background and text color overrides */
+        /* Redefine Streamlit's Core Design Tokens globally */
+        :root, .stApp, [data-testid="stAppViewContainer"] {
+            --primary-color: #00f0ff !important;
+            --background-color: #0e1117 !important;
+            --secondary-background-color: #1f2937 !important;
+            --text-color: #e5e7eb !important;
+        }
+        
+        /* Force styling using variables */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-            background-color: #0e1117 !important;
-            color: #e5e7eb !important;
+            background-color: var(--background-color) !important;
+            color: var(--text-color) !important;
         }
         
-        /* Sidebar container */
         [data-testid="stSidebar"] {
-            background-color: #1f2937 !important;
-        }
-        
-        /* Fix sidebar text and label colors */
-        [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div, [data-testid="stSidebar"] li {
-            color: #e5e7eb !important;
+            background-color: var(--secondary-background-color) !important;
         }
         
         /* Header bar */
@@ -86,7 +88,7 @@ if current_theme == "Dark":
         
         /* Metric cards */
         .metric-card {
-            background-color: #1f2937;
+            background-color: var(--secondary-background-color);
             border: 1px solid #374151;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -101,7 +103,7 @@ if current_theme == "Dark":
             margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #00f0ff !important;
+            color: var(--primary-color) !important;
             font-size: 1.875rem;
             font-weight: 700;
         }
@@ -120,7 +122,7 @@ if current_theme == "Dark":
             color: #f3f4f6 !important;
         }
         .assistant-bubble {
-            background-color: #1f2937;
+            background-color: var(--secondary-background-color);
             border: 1px solid #374151;
             color: #f3f4f6 !important;
         }
@@ -134,7 +136,7 @@ if current_theme == "Dark":
             margin-top: 0.5rem;
             padding: 0.5rem;
             background-color: #111827;
-            border-left: 3px solid #00f0ff;
+            border-left: 3px solid var(--primary-color);
             font-size: 0.85rem;
             border-radius: 0.25rem;
             color: #e5e7eb !important;
@@ -151,7 +153,7 @@ if current_theme == "Dark":
         }
         .app-banner h1 {
             margin: 0;
-            color: #00f0ff !important;
+            color: var(--primary-color) !important;
             font-size: 2.25rem;
             font-weight: 800;
         }
@@ -160,84 +162,27 @@ if current_theme == "Dark":
             color: #9ca3af !important;
             font-size: 1.125rem;
         }
-        
-        /* Text, Markdown and headers */
-        h1, h2, h3, h4, h5, h6, p, span, label, li, a, .stMarkdown {
-            color: #e5e7eb !important;
-        }
-        
-        /* Tabs styling */
-        button[data-baseweb="tab"] {
-            color: #9ca3af !important;
-        }
-        button[data-baseweb="tab"][aria-selected="true"] {
-            color: #00f0ff !important;
-            border-bottom-color: #00f0ff !important;
-        }
-        
-        /* Fix input fields, textareas, and selection boxes */
-        input, textarea, select, div[data-baseweb="select"] {
-            background-color: #1f2937 !important;
-            color: #e5e7eb !important;
-            border-color: #374151 !important;
-        }
-        
-        /* Fix selectbox option elements */
-        div[role="listbox"] ul {
-            background-color: #1f2937 !important;
-            color: #e5e7eb !important;
-        }
-        
-        /* File uploader container */
-        div[data-testid="stFileUploader"] section {
-            background-color: #1f2937 !important;
-            border: 1px dashed #374151 !important;
-            color: #e5e7eb !important;
-        }
-        
-        /* Fix dataframes and tables in Dark Mode */
-        div[data-testid="stTable"] td, div[data-testid="stTable"] th, .stDataFrame td, .stDataFrame th, [data-testid="stTable"] tr, .stDataFrame tr, [data-testid="stDataFrameData"] td, [data-testid="stDataFrameData"] th {
-            color: #e5e7eb !important;
-            background-color: #1f2937 !important;
-        }
-        
-        /* Fix buttons in Dark Mode */
-        button[data-testid^="stBaseButton"], div.stButton > button {
-            background-color: #1f2937 !important;
-            color: #e5e7eb !important;
-            border: 1px solid #374151 !important;
-        }
-        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
-            background-color: #374151 !important;
-            color: #00f0ff !important;
-            border-color: #00f0ff !important;
-        }
-        /* Ensure button text labels are visible in Dark Mode */
-        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
-            color: #e5e7eb !important;
-        }
-        button[data-testid^="stBaseButton"]:hover p, button[data-testid^="stBaseButton"]:hover span, div.stButton > button:hover p, div.stButton > button:hover span {
-            color: #00f0ff !important;
-        }
     </style>
     """
 else:
     theme_style = """
     <style>
-        /* Light Theme overrides */
+        /* Redefine Streamlit's Core Design Tokens globally */
+        :root, .stApp, [data-testid="stAppViewContainer"] {
+            --primary-color: #1e3a8a !important;
+            --background-color: #ffffff !important;
+            --secondary-background-color: #f3f4f6 !important;
+            --text-color: #1f2937 !important;
+        }
+        
+        /* Force styling using variables */
         .stApp, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
+            background-color: var(--background-color) !important;
+            color: var(--text-color) !important;
         }
         
-        /* Sidebar container */
         [data-testid="stSidebar"] {
-            background-color: #f3f4f6 !important;
-        }
-        
-        /* Fix sidebar text and label colors */
-        [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div, [data-testid="stSidebar"] li {
-            color: #1f2937 !important;
+            background-color: var(--secondary-background-color) !important;
         }
         
         /* Header bar */
@@ -262,7 +207,7 @@ else:
             margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #1e3a8a !important;
+            color: var(--primary-color) !important;
             font-size: 1.875rem;
             font-weight: 700;
         }
@@ -281,7 +226,7 @@ else:
             color: #1e293b !important;
         }
         .assistant-bubble {
-            background-color: #f3f4f6;
+            background-color: var(--secondary-background-color);
             border: 1px solid #e5e7eb;
             color: #1e293b !important;
         }
@@ -295,7 +240,7 @@ else:
             margin-top: 0.5rem;
             padding: 0.5rem;
             background-color: #f9fafb;
-            border-left: 3px solid #1e3a8a;
+            border-left: 3px solid var(--primary-color);
             font-size: 0.85rem;
             border-radius: 0.25rem;
             color: #374151 !important;
@@ -320,65 +265,6 @@ else:
             margin-top: 0.5rem;
             color: #e0f2fe !important;
             font-size: 1.125rem;
-        }
-        
-        /* Text, Markdown and headers */
-        h1, h2, h3, h4, h5, h6, p, span, label, li, a, .stMarkdown {
-            color: #1f2937 !important;
-        }
-        
-        /* Tabs styling */
-        button[data-baseweb="tab"] {
-            color: #4b5563 !important;
-        }
-        button[data-baseweb="tab"][aria-selected="true"] {
-            color: #1e3a8a !important;
-            border-bottom-color: #1e3a8a !important;
-        }
-        
-        /* Fix input fields, textareas, and selection boxes */
-        input, textarea, select, div[data-baseweb="select"] {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
-            border-color: #e5e7eb !important;
-        }
-        
-        /* Fix selectbox option elements */
-        div[role="listbox"] ul {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
-        }
-        
-        /* File uploader container */
-        div[data-testid="stFileUploader"] section {
-            background-color: #f9fafb !important;
-            border: 1px dashed #e5e7eb !important;
-            color: #1f2937 !important;
-        }
-        
-        /* Fix dataframes and tables in Light Mode */
-        div[data-testid="stTable"] td, div[data-testid="stTable"] th, .stDataFrame td, .stDataFrame th, [data-testid="stTable"] tr, .stDataFrame tr, [data-testid="stDataFrameData"] td, [data-testid="stDataFrameData"] th {
-            color: #1f2937 !important;
-            background-color: #ffffff !important;
-        }
-        
-        /* Fix buttons in Light Mode */
-        button[data-testid^="stBaseButton"], div.stButton > button {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
-            border: 1px solid #e5e7eb !important;
-        }
-        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
-            background-color: #f3f4f6 !important;
-            color: #1e3a8a !important;
-            border-color: #1e3a8a !important;
-        }
-        /* Ensure button text labels are visible in Light Mode */
-        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
-            color: #1f2937 !important;
-        }
-        button[data-testid^="stBaseButton"]:hover p, button[data-testid^="stBaseButton"]:hover span, div.stButton > button:hover p, div.stButton > button:hover span {
-            color: #1e3a8a !important;
         }
     </style>
     """
