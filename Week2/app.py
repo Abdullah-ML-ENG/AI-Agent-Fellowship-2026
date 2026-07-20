@@ -97,12 +97,18 @@ if current_theme == "Dark":
         
         /* Style the chat input box for Dark Mode */
         div[data-testid="stChatInput"] {
-            background-color: transparent !important;
+            background-color: #1a1f2c !important;
+            border: 1px solid #374151 !important;
+            border-radius: 8px !important;
         }
         div[data-testid="stChatInput"] textarea {
-            background-color: #1a1f2c !important;
+            background-color: transparent !important;
             color: #ffffff !important;
-            border: 1px solid #374151 !important;
+            border: none !important;
+        }
+        div[data-testid="stChatInput"] button {
+            background-color: #00f0ff !important;
+            color: #0d0f14 !important;
         }
         
         /* High contrast buttons in Dark Mode */
@@ -243,10 +249,19 @@ else:
         }
         
         /* Style the chat input box for Light Mode */
-        div[data-testid="stChatInput"] textarea {
+        div[data-testid="stChatInput"] {
             background-color: #ffffff !important;
-            color: #1f2937 !important;
             border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+        }
+        div[data-testid="stChatInput"] textarea {
+            background-color: transparent !important;
+            color: #1f2937 !important;
+            border: none !important;
+        }
+        div[data-testid="stChatInput"] button {
+            background-color: #1e3a8a !important;
+            color: #ffffff !important;
         }
         
         /* High contrast buttons in Light Mode */
