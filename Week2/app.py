@@ -63,12 +63,12 @@ current_theme = st.session_state.get("theme_mode", "Light")
 if current_theme == "Dark":
     theme_style = """
     <style>
-        /* Redefine Streamlit's Core Design Tokens globally */
+        /* Redefine Streamlit's Core Design Tokens globally for Dark Mode */
         :root, .stApp, [data-testid="stAppViewContainer"] {
             --primary-color: #00f0ff !important;
-            --background-color: #0e1117 !important;
-            --secondary-background-color: #1f2937 !important;
-            --text-color: #e5e7eb !important;
+            --background-color: #0d0f14 !important;
+            --secondary-background-color: #1a1f2c !important;
+            --text-color: #ffffff !important;
         }
         
         /* Force styling using variables */
@@ -84,6 +84,38 @@ if current_theme == "Dark":
         /* Header bar */
         [data-testid="stHeader"] {
             background-color: transparent !important;
+        }
+        
+        /* High contrast headers, labels, and text */
+        h1, h2, h3, h4, h5, h6, p, li, span, label, .stMarkdown {
+            color: #ffffff !important;
+        }
+        [data-testid="stWidgetLabel"] p {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+        
+        /* High contrast buttons in Dark Mode */
+        button[data-testid^="stBaseButton"], div.stButton > button {
+            background-color: #1a1f2c !important;
+            color: #00f0ff !important;
+            border: 2px solid #00f0ff !important;
+            font-weight: 700 !important;
+            border-radius: 6px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
+            background-color: #00f0ff !important;
+            color: #0d0f14 !important;
+            border-color: #00f0ff !important;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5) !important;
+        }
+        /* Make button labels inherit colors */
+        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
+            color: inherit !important;
+            font-weight: 700 !important;
         }
         
         /* Metric cards */
@@ -119,12 +151,12 @@ if current_theme == "Dark":
         .user-bubble {
             background-color: #2e3e56;
             border: 1px solid #4a5c78;
-            color: #f3f4f6 !important;
+            color: #ffffff !important;
         }
         .assistant-bubble {
             background-color: var(--secondary-background-color);
             border: 1px solid #374151;
-            color: #f3f4f6 !important;
+            color: #ffffff !important;
         }
         .chat-avatar {
             font-size: 1.5rem;
@@ -139,17 +171,18 @@ if current_theme == "Dark":
             border-left: 3px solid var(--primary-color);
             font-size: 0.85rem;
             border-radius: 0.25rem;
-            color: #e5e7eb !important;
+            color: #ffffff !important;
         }
         
         /* Top app banner */
         .app-banner {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #0d0f14 100%);
             padding: 2rem;
             border-radius: 0.75rem;
-            border: 1px solid #1d4ed8;
+            border: 2px solid #00f0ff;
             margin-bottom: 2rem;
             text-align: center;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         }
         .app-banner h1 {
             margin: 0;
@@ -159,7 +192,7 @@ if current_theme == "Dark":
         }
         .app-banner p {
             margin-top: 0.5rem;
-            color: #9ca3af !important;
+            color: #e5e7eb !important;
             font-size: 1.125rem;
         }
     </style>
@@ -167,7 +200,7 @@ if current_theme == "Dark":
 else:
     theme_style = """
     <style>
-        /* Redefine Streamlit's Core Design Tokens globally */
+        /* Redefine Streamlit's Core Design Tokens globally for Light Mode */
         :root, .stApp, [data-testid="stAppViewContainer"] {
             --primary-color: #1e3a8a !important;
             --background-color: #ffffff !important;
@@ -188,6 +221,35 @@ else:
         /* Header bar */
         [data-testid="stHeader"] {
             background-color: transparent !important;
+        }
+        
+        /* High contrast headers, labels, and text */
+        h1, h2, h3, h4, h5, h6, p, li, span, label, .stMarkdown {
+            color: #1f2937 !important;
+        }
+        [data-testid="stWidgetLabel"] p {
+            color: #1f2937 !important;
+            font-weight: 600 !important;
+        }
+        
+        /* High contrast buttons in Light Mode */
+        button[data-testid^="stBaseButton"], div.stButton > button {
+            background-color: #ffffff !important;
+            color: #1e3a8a !important;
+            border: 2px solid #1e3a8a !important;
+            font-weight: 700 !important;
+            border-radius: 6px !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        button[data-testid^="stBaseButton"]:hover, div.stButton > button:hover {
+            background-color: #1e3a8a !important;
+            color: #ffffff !important;
+            border-color: #1e3a8a !important;
+        }
+        /* Make button labels inherit colors */
+        button[data-testid^="stBaseButton"] p, button[data-testid^="stBaseButton"] span, div.stButton > button p, div.stButton > button span {
+            color: inherit !important;
+            font-weight: 700 !important;
         }
         
         /* Metric cards */
