@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="100%" height="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <text x="30" y="40" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#1e293b">Enterprise RAG Dual-Path Architecture</text>
+  <text x="30" y="60" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-size="12" fill="#64748b">Overview of Document Ingestion Flow &amp; Real-time Retrieval Loop</text>
+
+  <!-- Section Group: Ingestion (Top) -->
+  <g transform="translate(0, 10)">
+    <rect x="30" y="100" width="120" height="50" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)" />
+    <text x="90" y="125" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#1d4ed8" text-anchor="middle">1. Docs (PDF/Docx)</text>
+
+    <line x1="150" y1="125" x2="190" y2="125" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="190" y="100" width="140" height="50" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)" />
+    <text x="260" y="120" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#1d4ed8" text-anchor="middle">2. Document Parser</text>
+    <text x="260" y="135" font-family="'Segoe UI', sans-serif" font-size="10" fill="#475569" text-anchor="middle">Clean &amp; Chunk Text</text>
+
+    <line x1="330" y1="125" x2="370" y2="125" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <path d="M 370 125 L 400 100" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+    <path d="M 370 125 L 400 150" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="400" y="75" width="150" height="40" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="2" filter="url(#shadow)" />
+    <text x="475" y="99" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#15803d" text-anchor="middle">Dense Embedding Gen</text>
+
+    <rect x="400" y="135" width="150" height="40" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="2" filter="url(#shadow)" />
+    <text x="475" y="159" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#be185d" text-anchor="middle">Sparse Key Tokenizer</text>
+
+    <path d="M 550 95 L 590 120" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+    <path d="M 550 155 L 590 130" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="590" y="100" width="150" height="50" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" filter="url(#shadow)" />
+    <text x="665" y="125" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">HYBRID STORAGE</text>
+    <text x="665" y="140" font-family="'Segoe UI', sans-serif" font-size="9" fill="#64748b" text-anchor="middle">(Vector DB + BM25)</text>
+
+    <rect x="20" y="70" width="740" height="120" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,5" />
+    <text x="750" y="85" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#64748b">Ingestion Pipeline</text>
+  </g>
+
+  <!-- Section Group: Retrieval & Query Loop (Bottom) -->
+  <g transform="translate(0, 210)">
+    <rect x="30" y="70" width="110" height="50" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="2" filter="url(#shadow)" />
+    <text x="85" y="95" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#c2410c" text-anchor="middle">User Query</text>
+
+    <line x1="140" y1="95" x2="180" y2="95" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="180" y="70" width="130" height="50" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="2" filter="url(#shadow)" />
+    <text x="245" y="90" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#c2410c" text-anchor="middle">Query Rewriter</text>
+    <text x="245" y="105" font-family="'Segoe UI', sans-serif" font-size="9" fill="#64748b" text-anchor="middle">(HyDE / Expansion)</text>
+
+    <line x1="310" y1="95" x2="350" y2="95" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="350" y="70" width="150" height="50" rx="6" fill="#faf5ff" stroke="#a855f7" stroke-width="2" filter="url(#shadow)" />
+    <text x="425" y="90" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#6b21a8" text-anchor="middle">Hybrid Retriever</text>
+    <text x="425" y="105" font-family="'Segoe UI', sans-serif" font-size="9" fill="#64748b" text-anchor="middle">(BM25 + Semantic)</text>
+
+    <path d="M 665 -60 L 665 10 L 425 10 L 425 70" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow)" />
+
+    <line x1="500" y1="95" x2="530" y2="95" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="530" y="70" width="100" height="50" rx="6" fill="#faf5ff" stroke="#a855f7" stroke-width="2" filter="url(#shadow)" />
+    <text x="580" y="90" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#6b21a8" text-anchor="middle">Reranker</text>
+    <text x="580" y="105" font-family="'Segoe UI', sans-serif" font-size="9" fill="#64748b" text-anchor="middle">(Cross-Encoder)</text>
+
+    <line x1="630" y1="95" x2="660" y2="95" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+
+    <rect x="660" y="70" width="120" height="50" rx="6" fill="#f0fdfa" stroke="#0d9488" stroke-width="2" filter="url(#shadow)" />
+    <text x="720" y="95" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#0f766e" text-anchor="middle">LLM Generator</text>
+
+    <path d="M 720 120 L 720 145 L 85 145 L 85 120" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+    <text x="400" y="140" font-family="'Segoe UI', sans-serif" font-size="10" font-style="italic" fill="#64748b" text-anchor="middle">Response Stream with Citations</text>
+
+    <rect x="20" y="45" width="770" height="115" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,5" />
+    <text x="795" y="60" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#64748b">Query &amp; Generation Loop</text>
+  </g>
+</svg>
