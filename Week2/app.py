@@ -96,19 +96,30 @@ if current_theme == "Dark":
         }
         
         /* Style the chat input box for Dark Mode */
-        div[data-testid="stChatInput"] {
+        div[data-testid="stChatInput"], .stChatInput {
             background-color: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 8px !important;
         }
-        div[data-testid="stChatInput"] textarea {
+        div[data-testid="stChatInput"] textarea, 
+        .stChatInput textarea,
+        div[data-testid="stChatInput"] input,
+        .stChatInput input,
+        textarea[data-testid^="stChatInput"] {
             background-color: transparent !important;
             color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
             border: none !important;
         }
-        div[data-testid="stChatInput"] button {
-            background-color: #00f0ff !important;
-            color: #0d0f14 !important;
+        div[data-testid="stChatInput"] textarea::placeholder,
+        .stChatInput textarea::placeholder {
+            color: #6b7280 !important;
+            -webkit-text-fill-color: #6b7280 !important;
+        }
+        div[data-testid="stChatInput"] button,
+        .stChatInput button {
+            background-color: #1a1f2c !important;
+            color: #ffffff !important;
         }
         
         /* High contrast buttons in Dark Mode */
