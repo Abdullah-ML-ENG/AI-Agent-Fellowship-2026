@@ -97,13 +97,13 @@ if current_theme == "Dark":
         
         /* Style the chat input box for Dark Mode */
         div[data-testid="stChatInput"] {
-            background-color: #1a1f2c !important;
-            border: 1px solid #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
             border-radius: 8px !important;
         }
         div[data-testid="stChatInput"] textarea {
             background-color: transparent !important;
-            color: #ffffff !important;
+            color: #000000 !important;
             border: none !important;
         }
         div[data-testid="stChatInput"] button {
