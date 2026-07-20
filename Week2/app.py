@@ -87,12 +87,22 @@ if current_theme == "Dark":
         }
         
         /* High contrast headers, labels, and text */
-        h1, h2, h3, h4, h5, h6, p, li, span, label, .stMarkdown {
+        h1, h2, h3, h4, h5, h6, p, li, label, .stMarkdown {
             color: #ffffff !important;
         }
         [data-testid="stWidgetLabel"] p {
             color: #ffffff !important;
             font-weight: 600 !important;
+        }
+        
+        /* Style the chat input box for Dark Mode */
+        div[data-testid="stChatInput"] {
+            background-color: transparent !important;
+        }
+        div[data-testid="stChatInput"] textarea {
+            background-color: #1a1f2c !important;
+            color: #ffffff !important;
+            border: 1px solid #374151 !important;
         }
         
         /* High contrast buttons in Dark Mode */
@@ -224,12 +234,19 @@ else:
         }
         
         /* High contrast headers, labels, and text */
-        h1, h2, h3, h4, h5, h6, p, li, span, label, .stMarkdown {
+        h1, h2, h3, h4, h5, h6, p, li, label, .stMarkdown {
             color: #1f2937 !important;
         }
         [data-testid="stWidgetLabel"] p {
             color: #1f2937 !important;
             font-weight: 600 !important;
+        }
+        
+        /* Style the chat input box for Light Mode */
+        div[data-testid="stChatInput"] textarea {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #cbd5e1 !important;
         }
         
         /* High contrast buttons in Light Mode */
