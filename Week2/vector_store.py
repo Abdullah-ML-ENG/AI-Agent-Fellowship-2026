@@ -1,6 +1,13 @@
 import os
 import shutil
-from langchain_huggingface import HuggingFaceEmbeddings
+
+# Guard against torch/c10.dll being blocked by Windows Application Control (AppLocker/WDAC)
+try:
+    from langchain_huggingface import HuggingFaceEmbeddings
+    _HUGGINGFACE_AVAILABLE = True
+except Exception:
+    _HUGGINGFACE_AVAILABLE = False
+
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_chroma import Chroma
@@ -30,32 +37,31 @@ class VectorStoreManager:
         if self.embedding_provider == "openai" and self.api_key:
             return OpenAIEmbeddings(openai_api_key=self.api_key)
         elif self.embedding_provider == "gemini" and self.api_key:
-            # We can use OpenAIEmbeddings pointing to Google's API, or use a simple langchain-google-genai if imported
             try:
                 from langchain_google_genai import GoogleGenAIEmbeddings
                 return GoogleGenAIEmbeddings(model="models/embedding-001", google_api_key=self.api_key)
             except ImportError:
-                # Fallback to local HuggingFace if not installed
                 pass
-                
-        # Default local HuggingFace embeddings
-        # HuggingFaceEmbeddings is clean and runs locally
-        # Using a small and fast model: all-MiniLM-L6-v2
-        try:
-            return HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'}
-            )
-        except Exception as e:
-            # Fallback mock embedding for environment safety if HuggingFace fails to load/download
-            print(f"Warning: Failed to load local HuggingFace model ({e}). Using mock embeddings.")
-            class MockEmbeddings:
-                def embed_documents(self, texts):
-                    # Return deterministic dummy vectors of size 384
-                    return [[0.1] * 384 for _ in texts]
-                def embed_query(self, text):
-                    return [0.1] * 384
-            return MockEmbeddings()
+
+        # Default: try local HuggingFace embeddings if torch is available
+        if _HUGGINGFACE_AVAILABLE:
+            try:
+                return HuggingFaceEmbeddings(
+                    model_name="sentence-transformers/all-MiniLM-L6-v2",
+                    model_kwargs={'device': 'cpu'}
+                )
+            except Exception as e:
+                print(f"Warning: Failed to load HuggingFace model ({e}). Falling back to mock embeddings.")
+
+        # Fallback: pure Python mock embeddings (no torch needed)
+        # NOTE: For real semantic search, supply an OpenAI or Gemini API key in the sidebar.
+        print("ℹ️  torch/HuggingFace unavailable. Using mock embeddings. Add an OpenAI or Gemini API key for real semantic search.")
+        class MockEmbeddings:
+            def embed_documents(self, texts):
+                return [[0.1] * 384 for _ in texts]
+            def embed_query(self, text):
+                return [0.1] * 384
+        return MockEmbeddings()
 
     def load_database(self):
         """Load an existing database index if present."""

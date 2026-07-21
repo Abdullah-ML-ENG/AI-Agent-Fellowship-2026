@@ -2,7 +2,73 @@ import io
 import re
 from pypdf import PdfReader
 from docx import Document as DocxDocument
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+# Pure Python RecursiveCharacterTextSplitter — no torch/ML dependencies
+class RecursiveCharacterTextSplitter:
+    """
+    Minimal drop-in replacement for LangChain's RecursiveCharacterTextSplitter.
+    Uses only the Python standard library — no torch, no sentence_transformers.
+    """
+    def __init__(self, chunk_size=1000, chunk_overlap=200, length_function=len,
+                 separators=None):
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+        self.length_function = length_function
+        self.separators = separators or ["\n\n", "\n", ". ", " ", ""]
+
+    def split_text(self, text: str) -> list:
+        return self._split(text, self.separators)
+
+    def _split(self, text: str, separators: list) -> list:
+        chunks = []
+        separator = separators[-1]
+        for sep in separators:
+            if sep == "":
+                separator = sep
+                break
+            if sep in text:
+                separator = sep
+                break
+
+        splits = text.split(separator) if separator else list(text)
+        good_splits = []
+        for s in splits:
+            if self.length_function(s) < self.chunk_size:
+                good_splits.append(s)
+            else:
+                if good_splits:
+                    chunks.extend(self._merge(good_splits, separator))
+                    good_splits = []
+                next_seps = separators[separators.index(separator) + 1:] if separator in separators else [""]
+                chunks.extend(self._split(s, next_seps))
+        if good_splits:
+            chunks.extend(self._merge(good_splits, separator))
+        return chunks
+
+    def _merge(self, splits: list, separator: str) -> list:
+        chunks = []
+        current = []
+        current_len = 0
+        for s in splits:
+            s_len = self.length_function(s)
+            sep_len = self.length_function(separator) if current else 0
+            if current_len + sep_len + s_len > self.chunk_size and current:
+                chunk_text = separator.join(current).strip()
+                if chunk_text:
+                    chunks.append(chunk_text)
+                # Keep overlap
+                while current and (current_len > self.chunk_overlap or
+                                   (current_len + sep_len + s_len > self.chunk_size and current_len > 0)):
+                    removed = current.pop(0)
+                    current_len -= self.length_function(removed) + self.length_function(separator)
+                    current_len = max(current_len, 0)
+            current.append(s)
+            current_len += s_len + (self.length_function(separator) if len(current) > 1 else 0)
+        if current:
+            chunk_text = separator.join(current).strip()
+            if chunk_text:
+                chunks.append(chunk_text)
+        return chunks
 
 def clean_text(text: str) -> str:
     """Clean extracted text from unnecessary whitespaces and artifacts."""
